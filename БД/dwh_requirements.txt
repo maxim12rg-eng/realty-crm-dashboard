@@ -1,0 +1,12 @@
+# DWH / ETL (Хранилище данных)
+# Python 3.14.0
+# Файлы: etl_full_v6.py, load_soprovozhdenie.py, load_tager_fg.py, load_cmap_deals.py, load_all_tables.py
+
+pandas==2.3.3
+SQLAlchemy==2.0.45
+psycopg2-binary==2.9.11
+python-dotenv==1.2.1
+requests==2.32.5
+schedule==1.2.2
+openpyxl==3.1.5
+mysql-connector-python

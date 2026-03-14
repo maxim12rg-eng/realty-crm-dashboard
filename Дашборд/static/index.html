@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1c25;--s2:#22252f;--s3:#2a2d3a;--border:#2e3142;--text:#e8e9ed;--t2:#9b9db0;--t3:#6b6d80;--accent:#6c5ce7;--al:#a29bfe;--green:#00cec9;--gbg:rgba(0,206,201,.12);--red:#ff6b6b;--rbg:rgba(255,107,107,.12);--orange:#fdcb6e;--obg:rgba(253,203,110,.12);--blue:#74b9ff;--bbg:rgba(116,185,255,.12);--pink:#fd79a8;--r:12px;--rs:8px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.nav{display:flex;align-items:center;gap:8px;padding:14px 28px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-logo{font-weight:800;font-size:18px;letter-spacing:-.5px;margin-right:20px;background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-tab{padding:8px 20px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;transition:all .25s;color:var(--t2);border:1px solid transparent;user-select:none}
+.nav-tab:hover{color:var(--text);background:var(--s2)}.nav-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fbar{display:flex;align-items:center;gap:10px;padding:10px 28px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.fg{display:flex;align-items:center;gap:5px}.fl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.pill{padding:5px 13px;border-radius:16px;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid var(--border);background:var(--s2);color:var(--t2)}
+.pill:hover{border-color:var(--accent);color:var(--text)}.pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.sep{width:1px;height:22px;background:var(--border);margin:0 6px}
+.date-label{font-size:10px;color:var(--t3);padding:3px 10px;border:1px solid var(--border);border-radius:16px;background:var(--s2)}
+.page{display:none;padding:22px 28px;animation:fi .3s ease}.page.active{display:block}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;position:relative;overflow:hidden}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kc.green::before{background:var(--green)}.kc.blue::before{background:var(--blue)}.kc.red::before{background:var(--red)}.kc.orange::before{background:var(--orange)}.kc.accent::before{background:var(--accent)}
+.kl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}.kv{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1}.ks{font-size:10px;color:var(--t3);margin-top:4px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}.g12{display:grid;grid-template-columns:380px 1fr;gap:12px;margin-bottom:20px}
+.pnl{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px}
+.pt{font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.pt .ico{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:11px}
+thead th{text-align:left;padding:7px 8px;color:var(--t3);font-weight:500;font-size:9px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap}tbody tr:hover{background:var(--s2)}tbody tr:last-child td{border-bottom:none}
+.rk{width:20px;height:20px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:10px}
+.rk1{background:linear-gradient(135deg,#f9ca24,#f0932b);color:#000}.rk2{background:linear-gradient(135deg,#dfe6e9,#b2bec3);color:#000}.rk3{background:linear-gradient(135deg,#e17055,#d63031);color:#fff}.rkn{background:var(--s3);color:var(--t2)}
+.cb{padding:2px 8px;border-radius:16px;font-size:10px;font-weight:700}.ch{background:var(--gbg);color:var(--green)}.cm{background:var(--obg);color:var(--orange)}.cl{background:var(--rbg);color:var(--red)}
+.sb{padding:2px 8px;border-radius:16px;font-size:9px;font-weight:600;white-space:nowrap}
+.sv{background:linear-gradient(135deg,rgba(253,121,168,.2),rgba(108,92,231,.2));color:var(--pink)}.st{background:var(--bbg);color:var(--blue)}.sl{background:var(--gbg);color:var(--green)}.sn{background:var(--obg);color:var(--orange)}.sg{background:var(--rbg);color:var(--red)}
+.ps{margin-bottom:12px}.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.plb{font-size:11px;font-weight:600}.pm{font-size:10px;color:var(--t3)}
+.pb{height:28px;background:var(--s3);border-radius:7px;overflow:hidden}.pf{height:100%;border-radius:7px;display:flex;align-items:center;padding-left:10px;font-size:10px;font-weight:700;color:#fff;transition:width .8s cubic-bezier(.22,1,.36,1);min-width:fit-content}
+.pfa{background:linear-gradient(90deg,#00b894,#00cec9)}.pfb{background:linear-gradient(90deg,#0984e3,#74b9ff)}.pfc{background:linear-gradient(90deg,#fdcb6e,#e17055)}.pfd{background:linear-gradient(90deg,#636e72,#b2bec3)}
+.pi{margin-top:12px;padding:9px 12px;background:rgba(108,92,231,.08);border:1px solid rgba(108,92,231,.2);border-radius:var(--rs);font-size:10px;color:var(--al);font-weight:500}
+.rr{display:grid;grid-template-columns:160px 160px 140px 80px 80px 160px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);gap:8px;font-size:11px}.rr:last-child{border-bottom:none}
+.rn{font-weight:600}.ra{color:var(--t3)}.rst{color:var(--t2)}
+.rd{padding:3px 9px;border-radius:16px;font-size:10px;font-weight:700;text-align:center;width:fit-content}.rd.cr{background:var(--rbg);color:var(--red)}.rd.wr{background:var(--obg);color:var(--orange)}
+.rph{color:var(--al);text-decoration:none;font-size:11px;font-weight:500}.rph:hover{text-decoration:underline}
+.pager{display:flex;align-items:center;gap:8px;margin-top:12px;justify-content:center}
+.pager-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--s2);color:var(--text);font-size:11px;font-family:inherit;cursor:pointer}.pager-btn:hover{background:var(--accent);border-color:var(--accent)}.pager-btn:disabled{opacity:.3;cursor:default}
+.pager-info{font-size:11px;color:var(--t3)}
+.dl-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--accent);background:transparent;color:var(--al);font-size:11px;font-family:inherit;cursor:pointer;margin-left:auto}.dl-btn:hover{background:var(--accent);color:#fff}
+.rm{display:grid;grid-template-columns:90px repeat(4,1fr);gap:3px}
+.rh{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--t3);text-align:center;padding:5px 2px}
+.rl{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--t2);text-align:center;padding:2px}
+.rc{border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;border:2px solid transparent;padding:5px 3px;min-height:62px}
+.rc:hover{transform:scale(1.04);z-index:2;border-color:rgba(255,255,255,.25)}.rc.active{border-color:#fff;box-shadow:0 0 14px rgba(255,255,255,.1)}
+.rcl{font-size:8px;font-weight:500;opacity:.75;margin-bottom:1px}.rcv{font-size:18px;font-weight:800;line-height:1}
+.rgn{background:rgba(255,107,107,.14);color:var(--red)}.rlv{background:rgba(253,203,110,.14);color:var(--orange)}.rcl2{background:rgba(116,185,255,.11);color:var(--blue)}.rac{background:rgba(0,206,201,.14);color:var(--green)}
+.rk2s{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.rkp{background:var(--s2);border-radius:var(--rs);padding:12px;text-align:center}.rkv{font-size:20px;font-weight:800;letter-spacing:-.5px}.rkl{font-size:9px;color:var(--t3);margin-top:2px}
+.mb{width:60px;height:4px;background:var(--s3);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:4px}.mbf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--pink))}
+a.dl{color:var(--al);text-decoration:none}a.dl:hover{text-decoration:underline}
+.dp{margin-top:12px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">AgentHub</div>
+  <div class="nav-tab active" data-tab="churn">Churn-анализ</div>
+  <div class="nav-tab" data-tab="rf">RF-анализ</div>
+  <div class="nav-tab" data-tab="cohort">Когорты</div>
+</nav>
+
+<div class="fbar" id="f-churn">
+  <div class="fg"><span class="fl">Разрез:</span><div class="pill active" data-ce="agent">Агенты</div><div class="pill" data-ce="agency">Агентства</div></div>
+  <div class="sep"></div>
+  <div class="date-label">📅 Данные с 01.04.2025</div>
+</div>
+
+<div class="fbar" id="f-rf" style="display:none">
+  <div class="fg"><span class="fl">Метрика:</span><div class="pill active" data-rm="deals">Сделки</div><div class="pill" data-rm="shows">Показы</div></div>
+  <div class="sep"></div>
+  <div class="fg"><span class="fl">Разрез:</span><div class="pill active" data-re="agent">Агенты</div><div class="pill" data-re="agency">Агентства</div></div>
+  <div class="sep"></div>
+  <div class="date-label">📅 Данные с 01.04.2025</div>
+</div>
+
+<div class="page active" id="p-churn">
+  <div class="kpi-row" id="cKpi"></div>
+  <div class="g2">
+    <div class="pnl"><div class="pt"><span class="ico" style="background:var(--accent);color:#fff">P</span>Парето</div><div id="cPareto"></div></div>
+    <div class="pnl"><div class="pt"><span class="ico" style="background:var(--green);color:#000">★</span><span id="cTopT">Топ-10</span></div><div class="tw"><table><thead id="cTopH"></thead><tbody id="cTopB"></tbody></table></div></div>
+  </div>
+  <div class="pnl">
+    <div class="pt">
+      <span class="ico" style="background:var(--red);color:#fff">!</span>
+      <span id="cRiskT">Зона риска</span>
+      <span style="font-weight:400;color:var(--t3);font-size:10px;margin-left:6px">только с сделками · по дате последней сделки ↓</span>
+      <button class="dl-btn" onclick="downloadExcel()">📥 Excel</button>
+    </div>
+    <div id="cRisk"></div>
+    <div class="pager" id="cPager"></div>
+  </div>
+</div>
+
+<div class="page" id="p-rf">
+  <div class="rk2s" id="rfKpi"></div>
+  <div class="g12">
+    <div class="pnl"><div class="pt"><span class="ico" style="background:var(--pink);color:#fff">◆</span>RF-матрица</div><div class="rm" id="rfM"></div><div class="pi" style="margin-top:12px">💡 Кликните на ячейку для фильтрации</div></div>
+    <div class="pnl"><div class="pt"><span class="ico" style="background:var(--accent);color:#fff">≡</span><span id="rfTT">Все</span></div><div class="tw"><table><thead id="rfTH"></thead><tbody id="rfTB"></tbody></table></div></div>
+  </div>
+  <div class="pnl dp"><div class="pt"><span class="ico" style="background:var(--blue);color:#fff">↓</span><span id="rfDT">Детализация</span></div><div class="tw"><table><thead id="rfDH"></thead><tbody id="rfDB"></tbody></table></div></div>
+</div>
+
+<div class="fbar" id="f-cohort" style="display:none">
+  <div class="fg"><span class="fl">Разрез:</span><div class="pill active" data-cohe="agent">Агенты</div><div class="pill" data-cohe="agency">Агентства</div></div>
+  <div class="sep"></div>
+  <div class="fg"><span class="fl">Метрика:</span><div class="pill active" data-cohm="retention">Retention (показы)</div></div>
+  <div class="sep"></div>
+  <div class="date-label">📅 Когорты с апреля 2025</div>
+</div>
+
+<div class="page" id="p-cohort">
+  <div class="pnl">
+    <div class="pt"><span class="ico" style="background:var(--green);color:#000">◈</span><span id="cohTitle">Когортный анализ</span></div>
+    <div class="tw" id="cohTable" style="font-size:11px"></div>
+  </div>
+  <div class="pnl dp">
+    <div class="pt"><span class="ico" style="background:var(--blue);color:#fff">👥</span><span id="cohDetTitle">Кликните на строку когорты</span></div>
+    <div class="tw"><table><thead id="cohDetH"></thead><tbody id="cohDetB"></tbody></table></div>
+  </div>
+</div>
+
+<script>
+const A='';
+let S={tab:'churn',ce:'agent',re:'agent',rm:'deals',rfs:null,rrs:null,riskPage:1,cohe:'agent',cohm:'retention'};
+
+function fmt(n){if(n==null)return'—';if(n>=1e9)return(n/1e9).toFixed(1)+' млрд';if(n>=1e6)return(n/1e6).toFixed(1)+' млн';if(n>=1e3)return Math.round(n/1e3)+' тыс';return Number(n).toLocaleString('ru-RU')}
+function fD(d){if(!d)return'—';return d.split('-').reverse().join('.')}
+function cC(c){return c>=40?'ch':c>=25?'cm':'cl'}
+function rC(i){return i===0?'rk1':i===1?'rk2':i===2?'rk3':'rkn'}
+function sB(l){if(!l)return'';const x=l.toLowerCase();let c='sn';if(x.includes('vip'))c='sv';else if(x.includes('топ'))c='st';else if(x.includes('лояль'))c='sl';else if(x.includes('ушедш'))c='sg';return`<span class="sb ${c}">${l}</span>`}
+function pL(p){if(!p)return'<span style="color:var(--t3);font-size:10px">нет тел.</span>';const c=p.replace(/[^\d+,]/g,'').split(',')[0];return`<a class="rph" href="tel:${c}">${p.split(',')[0].trim()}</a>`}
+
+async function api(path,params={}){const u=new URL(A+path,location.origin);Object.entries(params).forEach(([k,v])=>{if(v!=null&&v!=='')u.searchParams.set(k,v)});try{const r=await fetch(u);if(!r.ok)throw r.status;return await r.json()}catch(e){console.error('API:',path,e);return null}}
+
+document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));t.classList.add('active');S.tab=t.dataset.tab;document.getElementById('p-'+S.tab).classList.add('active');document.getElementById('f-churn').style.display=S.tab==='churn'?'flex':'none';document.getElementById('f-rf').style.display=S.tab==='rf'?'flex':'none';document.getElementById('f-cohort').style.display=S.tab==='cohort'?'flex':'none';if(S.tab==='churn')lC();else if(S.tab==='rf')lR();else lCoh()}));
+document.querySelectorAll('[data-ce]').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('[data-ce]').forEach(x=>x.classList.remove('active'));p.classList.add('active');S.ce=p.dataset.ce;S.riskPage=1;lC()}));
+document.querySelectorAll('[data-rm]').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('[data-rm]').forEach(x=>x.classList.remove('active'));p.classList.add('active');S.rm=p.dataset.rm;S.rfs=null;S.rrs=null;lR()}));
+document.querySelectorAll('[data-re]').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('[data-re]').forEach(x=>x.classList.remove('active'));p.classList.add('active');S.re=p.dataset.re;S.rfs=null;S.rrs=null;lR()}));
+
+// ═══ CHURN ═══
+async function lC(){
+  const e=S.ce,isA=e==='agency',l=isA?'агентств':'агентов';
+  const kpi=await api('/api/churn/kpi',{entity:e});
+  document.getElementById('cKpi').innerHTML=kpi?`
+    <div class="kc green"><div class="kl">Активных ${l}</div><div class="kv">${kpi.active_count||0}</div><div class="ks">С показами за 3 мес</div></div>
+    <div class="kc blue"><div class="kl">Новых ${l}</div><div class="kv">${kpi.new_count||0}</div><div class="ks">Первый показ за 30 дней (за всё время)</div></div>
+    <div class="kc red"><div class="kl">Churn ${l}</div><div class="kv">${kpi.churned_count||0}</div><div class="ks">Были с сделками, пропали 3+ мес</div></div>
+    ${isA?`<div class="kc accent"><div class="kl">Ср. агентов на АН</div><div class="kv">${kpi.avg_agents||'—'}</div><div class="ks">Среди активных</div></div>`
+    :`<div class="kc orange"><div class="kl">Средний CR%</div><div class="kv">${kpi.avg_cr||0}%</div><div class="ks">Показ → Сделка</div></div>`}`:'';
+  
+  const par=await api('/api/churn/pareto',{entity:e});
+  if(par){
+    const maxEc=Math.max(...par.map(p=>p.entity_count),1);
+    document.getElementById('cPareto').innerHTML=par.map((p,i)=>{
+      const c=['pfa','pfb','pfc','pfd'][i];
+      const barPct=Math.max(p.entity_count/maxEc*100,3);
+      return`<div class="ps"><div class="ph"><span class="plb">${p.label}</span><span class="pm">${p.entity_count} ${isA?'АН':'аг.'} · ${p.deal_count} сд.</span></div><div class="pb"><div class="pf ${c}" style="width:${barPct}%">${p.deal_count}</div></div></div>`
+    }).join('')+`<div class="pi">💡 Группы A+B: ${par.slice(0,2).reduce((s,p)=>s+p.entity_count,0)} ${isA?'АН':'аг.'} дают ${par.reduce((s,p)=>s+p.deal_count,0)?Math.round(par.slice(0,2).reduce((s,p)=>s+p.deal_count,0)/par.reduce((s,p)=>s+p.deal_count,0)*100):0}% сделок</div>`
+  }
+  
+  const top=await api('/api/churn/top',{entity:e,limit:10});
+  document.getElementById('cTopT').textContent=`Топ-10 ${isA?'агентств':'агентов'}`;
+  document.getElementById('cTopH').innerHTML=`<tr><th>#</th><th>${isA?'Агентство':'Агент'}</th>${isA?'<th>Агентов</th>':''}<th>Показы</th><th>Сделки</th><th>CR%</th></tr>`;
+  document.getElementById('cTopB').innerHTML=top?top.map((r,i)=>`<tr><td><span class="rk ${rC(i)}">${i+1}</span></td><td style="font-weight:600">${r.entity_name||'—'}</td>${isA?`<td>${r.active_agents_count||0}</td>`:''}<td>${r.total_shows}</td><td style="font-weight:700">${r.total_deals}</td><td><span class="cb ${cC(r.cr_show_to_deal)}">${r.cr_show_to_deal||0}%</span></td></tr>`).join(''):'';
+  
+  await loadRisk();
+}
+
+async function loadRisk(){
+  const e=S.ce,isA=e==='agency';
+  document.getElementById('cRiskT').textContent=`${isA?'Агентства':'Агенты'} в зоне риска`;
+  const res=await api('/api/churn/risk',{entity:e,page:S.riskPage,per_page:20});
+  if(!res)return;
+  const{total,page,per_page,data}=res;
+  const pages=Math.ceil(total/per_page);
+  document.getElementById('cRisk').innerHTML=data.length?data.map(r=>`
+    <div class="rr">
+      <div class="rn">${r.entity_name||'—'}</div>
+      <div class="ra">${!isA?(r.agency_name||''):''}</div>
+      <div class="rst">Послед. сделка: ${fD(r.last_deal_dt)}</div>
+      <div class="rst">Сделок: ${r.total_deals}</div>
+      <div class="rd ${r.days_since_last_deal>120?'cr':'wr'}">${r.days_since_last_deal} дн</div>
+      <div>${pL(r.agent_phone)}</div>
+    </div>`).join(''):'<div style="padding:14px;color:var(--t3);font-size:11px">Нет данных</div>';
+  document.getElementById('cPager').innerHTML=pages>1?`
+    <button class="pager-btn" onclick="S.riskPage--;loadRisk()" ${page<=1?'disabled':''}>← Назад</button>
+    <span class="pager-info">Стр. ${page} из ${pages} (всего ${total})</span>
+    <button class="pager-btn" onclick="S.riskPage++;loadRisk()" ${page>=pages?'disabled':''}>Вперёд →</button>
+  `:'<span class="pager-info">Всего: '+total+'</span>';
+}
+
+function downloadExcel(){window.open(A+'/api/churn/risk/excel?entity='+S.ce,'_blank')}
+
+// ═══ RF ═══
+const FO=['vip','top','loyal','newcomer'],RO=['gone','leaving','cooling','active'];
+const FL={vip:'VIP',top:'ТОП',loyal:'Лояльные',newcomer:'Новички'};
+const RL={gone:'Ушедшие',leaving:'Уходящие',cooling:'Остывающие',active:'Активные'};
+const RCS={gone:'rgn',leaving:'rlv',cooling:'rcl2',active:'rac'};
+function gFL(m,e){if(m==='shows'&&e==='agency')return{vip:'16+',top:'10–15',loyal:'4–9',newcomer:'1–3'};return{vip:'5+',top:'3–4',loyal:'2',newcomer:'1'}}
+function gRL(m){return m==='shows'?{active:'1 мес',cooling:'2–3 мес',leaving:'4–5 мес',gone:'6+ мес'}:{active:'1–3 мес',cooling:'4–6 мес',leaving:'7–12 мес',gone:'13+ мес'}}
+
+async function lR(){
+  const{re:e,rm:m}=S;const isA=e==='agency',isD=m==='deals',ml=isD?'сделок':'показов',el=isA?'АН':'агентам',fl=gFL(m,e),rl=gRL(m);
+  const kpi=await api('/api/rf/kpi',{entity:e,metric:m});
+  document.getElementById('rfKpi').innerHTML=kpi?`
+    <div class="rkp"><div class="rkv" style="color:var(--green)">${kpi.total_entities||0}</div><div class="rkl">Всего с ${ml}ми</div></div>
+    <div class="rkp"><div class="rkv" style="color:var(--accent)">${isD?fmt(kpi.avg_amount):kpi.total_events||0}</div><div class="rkl">${isD?'Средний чек':'Всего '+ml}</div></div>
+    <div class="rkp"><div class="rkv" style="color:var(--pink)">${kpi.pct_vip_top||0}%</div><div class="rkl">VIP + ТОП</div></div>`:'';
+  
+  const mx=await api('/api/rf/matrix',{entity:e,metric:m});
+  const cm={};if(mx)mx.forEach(r=>{cm[r.f_segment+'-'+r.r_segment]=r.cnt});
+  let h='<div class="rh"></div>';RO.forEach(r=>{h+=`<div class="rh" style="color:var(${r==='gone'?'--red':r==='leaving'?'--orange':r==='cooling'?'--blue':'--green'})">${isD?'Сделки':'Показы'} за<br>${rl[r]}</div>`});
+  FO.forEach(f=>{h+=`<div class="rl">${FL[f]}<br><span style="font-size:8px;color:var(--t3)">${fl[f]} ${isD?'сд.':'пок.'}</span></div>`;RO.forEach(r=>{const cnt=cm[f+'-'+r]||0;const act=S.rfs===f&&S.rrs===r;h+=`<div class="rc ${RCS[r]} ${act?'active':''}" data-f="${f}" data-r="${r}" onclick="cRF(this)"><div class="rcl">${RL[r]}</div><div class="rcv">${cnt||'—'}</div></div>`})});
+  document.getElementById('rfM').innerHTML=h;
+  
+  const tbl=await api('/api/rf/table',{entity:e,metric:m,f_segment:S.rfs,r_segment:S.rrs});
+  const seg=S.rfs&&S.rrs?`${RL[S.rrs]} ${FL[S.rfs]}`:'Все';
+  document.getElementById('rfTT').textContent=`RF ${ml} по ${el}: ${seg}`;
+  document.getElementById('rfTH').innerHTML=`<tr><th>${isA?'АН':'Агент'}</th>${!isA?'<th>АН</th>':''}<th>Кол-во</th>${isD?'<th>Ср. цена</th><th>Сумма</th>':''}<th>Последн.</th><th>Сегмент</th></tr>`;
+  if(tbl&&tbl.length){const ma=Math.max(...tbl.map(r=>r.total_amount||0),1);document.getElementById('rfTB').innerHTML=tbl.map(r=>{
+    const fs=r.f_segment,rs=r.r_segment;
+    const lb=rs==='active'?FL[fs]:(RL[rs]+' '+FL[fs]).toLowerCase().replace(/^./,c=>c.toUpperCase());
+    return`<tr style="cursor:pointer" onclick="lDet(${r.entity_id})"><td style="font-weight:600">${r.entity_name||'—'}</td>${!isA?`<td style="color:var(--t2)">${r.agency_name||''}</td>`:''}<td style="font-weight:700;text-align:center">${r.frequency}</td>${isD?`<td>${fmt(r.avg_amount)}</td><td><div class="mb"><div class="mbf" style="width:${(r.total_amount||0)/ma*100}%"></div></div>${fmt(r.total_amount)}</td>`:''}<td style="color:var(--t2)">${fD(r.last_event_dt)}</td><td>${sB(lb)}</td></tr>`}).join('')}else{document.getElementById('rfTB').innerHTML='<tr><td colspan="7" style="padding:16px;color:var(--t3)">Нет данных</td></tr>'}
+  document.getElementById('rfDH').innerHTML='';document.getElementById('rfDB').innerHTML='';document.getElementById('rfDT').textContent='Кликните на строку для детализации';
+}
+function cRF(el){const f=el.dataset.f,r=el.dataset.r;if(S.rfs===f&&S.rrs===r){S.rfs=null;S.rrs=null}else{S.rfs=f;S.rrs=r}lR()}
+async function lDet(eid){const{re:e,rm:m}=S;const isD=m==='deals';const d=await api('/api/rf/detail',{entity:e,entity_id:eid,metric:m});if(!d||!d.length)return;
+  document.getElementById('rfDT').textContent=`Детализация: ${d[0].entity_name||d[0].agency_name||'—'}`;
+  document.getElementById('rfDH').innerHTML=`<tr><th>${e==='agency'?'АН':'Агент'}</th><th>АН</th><th>Дата</th>${isD?'<th>Цена лота</th>':''}<th>Объект</th><th>Ссылка</th></tr>`;
+  document.getElementById('rfDB').innerHTML=d.map(r=>`<tr><td>${r.entity_name||'—'}</td><td style="color:var(--t2)">${r.agency_name||''}</td><td>${fD(r.event_dt)}</td>${isD?`<td>${fmt(r.deal_amount)}</td>`:''}<td>${r.object_name||'—'}</td><td>${r.deal_link?`<a class="dl" href="${r.deal_link}" target="_blank">🔗</a>`:''}</td></tr>`).join('')}
+
+// ═══ COHORT ═══
+document.querySelectorAll('[data-cohe]').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('[data-cohe]').forEach(x=>x.classList.remove('active'));p.classList.add('active');S.cohe=p.dataset.cohe;lCoh()}));
+document.querySelectorAll('[data-cohm]').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('[data-cohm]').forEach(x=>x.classList.remove('active'));p.classList.add('active');S.cohm=p.dataset.cohm;lCoh()}));
+
+async function lCoh(){
+  const isA=S.cohe==='agency',el=isA?'АН':'агентов',ml=S.cohm==='retention'?'Retention (показы)':'Conversion (сделки)';
+  document.getElementById('cohTitle').textContent=`Когортный анализ ${el}: ${ml}`;
+  document.getElementById('cohDetTitle').textContent='Кликните на строку когорты';
+  document.getElementById('cohDetH').innerHTML='';document.getElementById('cohDetB').innerHTML='';
+  const d=await api('/api/cohort',{entity:S.cohe,metric:S.cohm});
+  if(!d||!d.length){document.getElementById('cohTable').innerHTML='<div style="padding:16px;color:var(--t3)">Нет данных</div>';return}
+  const cohorts={};let maxOff=0;
+  d.forEach(r=>{const cm=r.cohort_month;if(!cohorts[cm])cohorts[cm]={size:r.cohort_size,o:{}};cohorts[cm].o[r.month_offset]=r.pct;if(r.month_offset>maxOff)maxOff=r.month_offset});
+  const months=Object.keys(cohorts).sort();maxOff=Math.min(maxOff,12);
+  function hc(p){if(p==null)return'';if(p>=70)return'background:rgba(0,206,201,0.35);color:#fff';if(p>=40)return'background:rgba(0,206,201,0.2);color:var(--green)';if(p>=20)return'background:rgba(253,203,110,0.2);color:var(--orange)';if(p>=5)return'background:rgba(255,107,107,0.15);color:var(--red)';return'background:rgba(255,107,107,0.08);color:var(--t3)'}
+  function fM(iso){if(!iso)return'';const[y,m]=iso.split('-');const mn=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];return mn[parseInt(m)-1]+' '+y.slice(2)}
+  let h='<table style="border-collapse:collapse"><thead><tr><th style="padding:6px 10px;position:sticky;left:0;background:var(--surface);z-index:2;min-width:90px">Когорта</th><th style="padding:6px 8px;text-align:center;min-width:55px">Размер</th>';
+  for(let i=0;i<=maxOff;i++)h+=`<th style="padding:6px 6px;text-align:center;min-width:55px">${i===0?'Старт':'+'+i+' мес'}</th>`;
+  h+='</tr></thead><tbody>';
+  months.forEach(cm=>{const c=cohorts[cm];h+=`<tr style="cursor:pointer" onclick="lCohDet('${cm}','${fM(cm)}',${c.size})"><td style="padding:5px 10px;font-weight:600;position:sticky;left:0;background:var(--surface);z-index:1;border-bottom:1px solid var(--border)">${fM(cm)}</td><td style="padding:5px 8px;text-align:center;color:var(--t2);border-bottom:1px solid var(--border);font-weight:700">${c.size}</td>`;
+    for(let i=0;i<=maxOff;i++){const p=c.o[i];h+=p!=null?`<td style="padding:5px 6px;text-align:center;border-bottom:1px solid var(--border);${hc(p)};font-weight:600;font-size:10px">${p}%</td>`:`<td style="padding:5px 6px;border-bottom:1px solid var(--border)"></td>`}
+    h+='</tr>'});
+  h+='</tbody></table>';document.getElementById('cohTable').innerHTML=h;
+}
+
+async function lCohDet(cm,label,size){
+  const isA=S.cohe==='agency';
+  document.getElementById('cohDetTitle').textContent=`Когорта ${label} — ${size} ${isA?'АН':'агентов'}`;
+  const d=await api('/api/cohort/detail',{entity:S.cohe,cohort_month:cm});
+  if(!d||!d.length){document.getElementById('cohDetH').innerHTML='';document.getElementById('cohDetB').innerHTML='<tr><td style="padding:16px;color:var(--t3)">Нет данных</td></tr>';return}
+  document.getElementById('cohDetH').innerHTML=`<tr><th>${isA?'АН':'Агент'}</th>${!isA?'<th>АН</th>':''}<th>Первый показ</th><th>Последний показ</th><th>Показов</th><th>Сделок</th><th>Посл. сделка</th><th>Сумма</th>${!isA?'<th>Телефон</th>':''}</tr>`;
+  document.getElementById('cohDetB').innerHTML=d.map(r=>`<tr>
+    <td style="font-weight:600">${r.entity_name||'—'}</td>
+    ${!isA?`<td style="color:var(--t2)">${r.agency_name||''}</td>`:''}
+    <td>${fD(r.first_show)}</td>
+    <td>${fD(r.last_show)}</td>
+    <td style="text-align:center">${r.total_shows}</td>
+    <td style="text-align:center;font-weight:700">${r.total_deals}</td>
+    <td>${fD(r.last_deal)}</td>
+    <td>${fmt(r.total_amount)}</td>
+    ${!isA?`<td>${pL(r.agent_phone)}</td>`:''}
+  </tr>`).join('');
+}
+
+lC();
+</script>
+</body>
+</html>

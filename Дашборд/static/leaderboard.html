@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEDVEX — Таблица лидеров</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1D3A;
+    --navy-light: #132B50;
+    --gold: #B8A44C;
+    --gold-light: #D4C565;
+    --slate: #5A7089;
+    --slate-light: #8FA4B8;
+    --white: #F5F2EB;
+    --card-bg: #FFFFFFEE;
+    --text-dark: #1A2A3A;
+    --text-muted: #6B7C8E;
+    --border: #D8DFE6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--navy);
+    min-height: 100vh;
+    color: var(--text-dark);
+  }
+
+  /* ─── BACKGROUND ─── */
+  .bg-wrapper {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(11,29,58,0.95), transparent 70%),
+      radial-gradient(ellipse at 80% 20%, rgba(19,43,80,0.9), transparent 60%),
+      linear-gradient(180deg, #0B1D3A 0%, #162E52 40%, #1A3660 100%);
+  }
+  .bg-wrapper::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .bg-wrapper::after {
+    content: ''; position: absolute; bottom: -50%; left: -20%; width: 140%; height: 100%;
+    background: radial-gradient(ellipse, rgba(184,164,76,0.06) 0%, transparent 60%);
+  }
+
+  /* ─── LAYOUT ─── */
+  .container {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    text-align: center; margin-bottom: 40px;
+  }
+  .header-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 14px;
+    letter-spacing: 6px; text-transform: uppercase;
+    color: var(--slate-light); margin-bottom: 20px;
+  }
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700; font-size: 52px;
+    color: var(--white); letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .header-subtitle {
+    font-size: 14px; font-weight: 500;
+    color: var(--slate-light); letter-spacing: 1px;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display: flex; justify-content: center; gap: 4px;
+    margin-bottom: 36px;
+  }
+  .tab {
+    padding: 12px 32px; border: none; cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    border-radius: 6px; transition: all 0.3s ease;
+    background: rgba(255,255,255,0.07);
+    color: var(--slate-light);
+  }
+  .tab:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+  .tab.active {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 48px 40px 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ─── PODIUM ─── */
+  .podium-section { margin-bottom: 44px; }
+
+  .podium {
+    display: flex; justify-content: center;
+    align-items: flex-end; gap: 8px;
+    height: 280px;
+  }
+
+  .podium-place {
+    display: flex; flex-direction: column;
+    align-items: center; position: relative;
+  }
+
+  .podium-info {
+    text-align: center; margin-bottom: 12px;
+    animation: fadeDown 0.6s ease-out both;
+  }
+  .podium-score {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700; font-size: 32px;
+    color: var(--text-dark); line-height: 1;
+  }
+  .podium-name {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-dark); margin-top: 4px;
+    max-width: 140px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .podium-agency {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 2px;
+    max-width: 140px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .podium-bar {
+    width: 150px; border-radius: 10px 10px 0 0;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    animation: growUp 0.8s ease-out both;
+  }
+  .podium-bar span {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700; font-size: 40px;
+    color: rgba(255,255,255,0.9);
+    position: relative; z-index: 1;
+  }
+
+  /* 1st place */
+  .place-1 .podium-bar {
+    height: 160px;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+  }
+  .place-1 .podium-info { animation-delay: 0.4s; }
+  .place-1 .podium-bar { animation-delay: 0.1s; }
+
+  /* 2nd place */
+  .place-2 .podium-bar {
+    height: 120px;
+    background: linear-gradient(180deg, var(--slate-light), var(--slate));
+  }
+  .place-2 .podium-info { animation-delay: 0.5s; }
+  .place-2 .podium-bar { animation-delay: 0.2s; }
+
+  /* 3rd place */
+  .place-3 .podium-bar {
+    height: 90px;
+    background: linear-gradient(180deg, #A07850, #7D5E3E);
+  }
+  .place-3 .podium-info { animation-delay: 0.6s; }
+  .place-3 .podium-bar { animation-delay: 0.3s; }
+
+  @keyframes growUp {
+    from { transform: scaleY(0); transform-origin: bottom; }
+    to { transform: scaleY(1); transform-origin: bottom; }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── TABLE ─── */
+  .table-section { margin-top: 8px; }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 70px 1fr 180px 120px;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--navy);
+    margin-bottom: 4px;
+  }
+  .table-header span {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .table-header span:nth-child(3),
+  .table-header span:nth-child(4) { text-align: right; }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 180px 120px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: background 0.2s;
+    animation: fadeIn 0.4s ease-out both;
+  }
+  .table-row:hover { background: rgba(11,29,58,0.03); }
+
+  .row-rank {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700; font-size: 24px;
+    color: var(--navy);
+  }
+
+  .row-name-block {}
+  .row-name {
+    font-size: 14px; font-weight: 600;
+    color: var(--text-dark);
+  }
+  .row-agency-sub {
+    font-size: 11px; color: var(--text-muted); margin-top: 2px;
+  }
+
+  .row-sum {
+    text-align: right;
+    font-size: 15px; font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .row-deals {
+    text-align: right;
+    font-size: 14px; font-weight: 600;
+    color: var(--slate);
+  }
+
+  /* top-3 highlight */
+  .table-row.top-1 .row-rank { color: var(--gold); }
+  .table-row.top-2 .row-rank { color: var(--slate); }
+  .table-row.top-3 .row-rank { color: #A07850; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    text-align: center; margin-top: 32px;
+    font-size: 11px; color: var(--slate);
+    letter-spacing: 1px;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .header-title { font-size: 36px; }
+    .card { padding: 32px 20px 28px; }
+    .podium-bar { width: 100px; }
+    .podium-bar span { font-size: 28px; }
+    .podium-score { font-size: 24px; }
+    .table-header, .table-row {
+      grid-template-columns: 50px 1fr 130px 80px;
+      padding: 12px 8px;
+    }
+    .tab { padding: 10px 20px; font-size: 11px; }
+  }
+
+  /* ─── LOADING ─── */
+  .loading {
+    text-align: center; padding: 60px;
+    color: var(--text-muted); font-size: 14px;
+  }
+  .loading::after {
+    content: ''; display: block;
+    width: 32px; height: 32px; margin: 16px auto 0;
+    border: 3px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="bg-wrapper"></div>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-brand">NEDVEX</div>
+    <h1 class="header-title">ТАБЛИЦА ЛИДЕРОВ</h1>
+    <div class="header-subtitle">Рейтинг по внесению ПВ · 2026</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('agent')">Агенты</button>
+    <button class="tab" onclick="switchTab('agency')">Агентства</button>
+  </div>
+
+  <!-- Card -->
+  <div class="card">
+    <div id="content">
+      <div class="loading">Загрузка данных...</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Обновлено: <span id="updated-at">—</span>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA — загрузка из API сервера
+// ============================================================
+
+// >>> ЗАГРУЗКА ИЗ API <<<
+const API_BASE = '';  // пустая строка — HTML на том же сервере что и API
+
+async function fetchData(tab) {
+  try {
+    const url = tab === 'agent'
+      ? `${API_BASE}/api/rating/agent`
+      : `${API_BASE}/api/rating/agency`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API error');
+    return await res.json();
+  } catch (e) {
+    console.error('Ошибка загрузки данных:', e);
+    return null;
+  }
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+
+function formatSum(val) {
+  if (val >= 1000000) return (val / 1000000).toFixed(1).replace('.0', '') + ' млн';
+  if (val >= 1000) return (val / 1000).toFixed(0) + ' тыс';
+  return val.toLocaleString('ru-RU');
+}
+
+function formatSumFull(val) {
+  return val.toLocaleString('ru-RU') + ' ₽';
+}
+
+function renderPodium(data) {
+  if (data.length < 3) return '';
+
+  // Порядок: 2-й, 1-й, 3-й
+  const order = [data[1], data[0], data[2]];
+  const places = ['place-2', 'place-1', 'place-3'];
+  const nums = [2, 1, 3];
+
+  return `
+    <div class="podium-section">
+      <div class="podium">
+        ${order.map((item, i) => `
+          <div class="podium-place ${places[i]}">
+            <div class="podium-info">
+              <div class="podium-score">${formatSum(item.sum_sale)}</div>
+              <div class="podium-name" title="${item.name}">${item.name}</div>
+              <div class="podium-agency">${item.count_deal} сделок</div>
+            </div>
+            <div class="podium-bar"><span>${nums[i]}</span></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderTable(data) {
+  const label = currentTab === 'agent' ? 'Агент' : 'Агентство';
+
+  const headerHTML = `
+    <div class="table-header">
+      <span>Место</span>
+      <span>${label}</span>
+      <span>Сумма</span>
+      <span>Сделки</span>
+    </div>
+  `;
+
+  const rowsHTML = data.map((item, i) => {
+    const topClass = item.rating <= 3 ? `top-${item.rating}` : '';
+    return `
+      <div class="table-row ${topClass}" style="animation-delay: ${i * 0.05}s">
+        <div class="row-rank">${item.rating}</div>
+        <div class="row-name-block">
+          <div class="row-name">${item.name}</div>
+        </div>
+        <div class="row-sum">${formatSumFull(item.sum_sale)}</div>
+        <div class="row-deals">${item.count_deal}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `<div class="table-section">${headerHTML}${rowsHTML}</div>`;
+}
+
+// ============================================================
+// TABS & INIT
+// ============================================================
+
+let currentTab = 'agent';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  loadData();
+}
+
+async function loadData() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">Загрузка данных...</div>';
+
+  const data = await fetchData(currentTab);
+
+  if (!data || data.length === 0) {
+    content.innerHTML = '<div class="loading" style="animation:none"><span style="color:#B8A44C;font-size:18px;">⚠</span><br>Нет данных или API недоступен</div>';
+    return;
+  }
+
+  const podiumHTML = renderPodium(data);
+  const tableHTML = renderTable(data);
+  content.innerHTML = podiumHTML + tableHTML;
+
+  // Обновляем дату
+  const now = new Date();
+  document.getElementById('updated-at').textContent =
+    now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Запуск
+loadData();
+</script>
+
+</body>
+</html>
