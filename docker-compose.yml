@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:16
+    container_name: realty_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: ./Дашборд
+      dockerfile: Dockerfile
+    container_name: realty_api
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${PG_DATABASE}
+      DB_USER: ${PG_USER}
+      DB_PASSWORD: ${PG_PASSWORD}
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  etl:
+    build:
+      context: ./БД
+      dockerfile: Dockerfile
+    container_name: realty_etl
+    restart: always
+    environment:
+      PG_HOST: db
+      PG_PORT: 5432
+      PG_DATABASE: ${PG_DATABASE}
+      PG_USER: ${PG_USER}
+      PG_PASSWORD: ${PG_PASSWORD}
+      ETL_BOT_TOKEN: ${ETL_BOT_TOKEN}
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
