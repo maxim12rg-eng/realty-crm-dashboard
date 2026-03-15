@@ -2,6 +2,11 @@
 
 Аналитическая платформа для отдела продаж недвижимости. Проект включает ETL-пайплайн, хранилище данных на PostgreSQL и интерактивные HTML-дашборды с REST API.
 
+## Живые дашборды
+
+- **Основной дашборд:** http://31.130.149.43:8000
+- **Таблица лидеров:** http://31.130.149.43:8000/static/leaderboard.html
+
 ## Стек технологий
 
 - **Python** — ETL, генерация данных, API
@@ -9,6 +14,7 @@
 - **FastAPI** — REST API для дашбордов
 - **SQL** — трансформации данных (17 скриптов)
 - **HTML/JS** — интерактивные дашборды
+- **Docker Compose** — деплой на сервер
 
 ## Архитектура
 
@@ -35,7 +41,9 @@
 ## Структура проекта
 
 ```
+├── docker-compose.yml          # Деплой: db + api + etl
 ├── БД/
+│   ├── Dockerfile
 │   ├── etl_full_v6.py          # Основной ETL: RAW → staging → mart
 │   ├── generate_fake_data.py   # Генератор синтетических данных
 │   ├── load_all_tables.py      # Загрузка таблиц из MySQL (Bitrix24)
@@ -49,6 +57,7 @@
 │       ├── ...
 │       └── 17_rang_agent.sql
 └── Дашборд/
+    ├── Dockerfile
     ├── api_server.py           # FastAPI сервер
     └── static/
         ├── index.html          # Основной дашборд
@@ -70,69 +79,18 @@
 **Основной дашборд** (`index.html`) — аналитика по агентскому отделу:
 - Воронка продаж (запись → показ → бронь → сделка → ПВ)
 - Churn-анализ агентов и агентств
-- Динамика по периодам
+- RF-матрица сегментации
+- Когортный анализ retention
 
 **Таблица лидеров** (`leaderboard.html`) — рейтинг агентов и агентств по объёму продаж.
 
-## Быстрый старт
+## Деплой
 
-### 1. Установить зависимости
-
-```bash
-pip install -r БД/dwh_requirements.txt
-pip install fastapi uvicorn "psycopg[binary]"
-```
-
-### 2. Настроить переменные окружения
-
-Создать файл `БД/.env`:
-```env
-PG_HOST=localhost
-PG_PORT=5432
-PG_DATABASE=realty_crm
-PG_USER=postgres
-PG_PASSWORD=your_password
-ETL_BOT_TOKEN=your_telegram_bot_token
-```
-
-Создать файл `Дашборд/.env`:
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=realty_crm
-DB_USER=postgres
-DB_PASSWORD=your_password
-```
-
-### 3. Создать базу данных PostgreSQL
-
-```sql
-CREATE DATABASE realty_crm;
-```
-
-### 4. Сгенерировать синтетические данные
+Проект задеплоен через Docker Compose (три контейнера: db, api, etl):
 
 ```bash
-cd БД
-python generate_fake_data.py
-```
-
-### 5. Запустить ETL
-
-```bash
-python etl_full_v6.py
-```
-
-### 6. Запустить API
-
-```bash
-cd Дашборд
-python -m uvicorn api_server:app --reload --port 8000
-```
-
-### 7. Открыть дашборд
-
-```
-http://localhost:8000
-http://localhost:8000/static/leaderboard.html
+git clone https://github.com/maxim12rg-eng/realty-crm-dashboard.git
+cd realty-crm-dashboard
+cp .env.example .env  # заполнить переменные
+docker-compose up -d
 ```
